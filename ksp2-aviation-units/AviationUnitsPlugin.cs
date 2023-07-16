@@ -49,16 +49,7 @@ namespace Codenade.AviationUnits
             await Task.Delay(20000);
             _initialized = true;
             GlobalLog.Log(LogFilter.UserMod, $"[{NAME}] Created after startup");
-            Type type = null;
-            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                if (asm.IsDynamic)
-                    continue;
-                foreach (var t in asm.GetTypes())
-                    if (t.Name == "RuntimeUnityEditor5")
-                        type = t;
-            }
-            new GameObject(NAME, typeof(AviationUnitsPlugin), type);
+            new GameObject(NAME, typeof(AviationUnitsPlugin));
         }
 
 		void OnVesselChanged(MessageCenterMessage msg)
