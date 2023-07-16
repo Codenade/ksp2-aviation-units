@@ -38,7 +38,7 @@
       <HintPath>$(KSP2_PATH)\BepInEx\core\BepInEx.dll</HintPath>
       <Private>False</Private>
     </Reference>
-	<Reference Include="Accessibility">
+    <Reference Include="Accessibility">
       <HintPath>$(KSP2_PATH)\KSP2_x64_Data\Managed\Accessibility.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -656,7 +656,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AviationUnitsMod.cs" />
+    <Compile Include="AviationUnitsPlugin.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
