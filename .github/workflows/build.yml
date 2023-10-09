@@ -3,12 +3,19 @@ on:
   pull_request:
     branches:
     - master
+  push:
+    branches:
+    - master
 jobs:
   build:
     name: Build
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v4.1.0
+    - name: Cache
+      uses: actions/cache@v3.3.2
     - name: Build
       uses: cake-build/cake-action@v1.4.1
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3.1.3
