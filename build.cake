@@ -14,10 +14,14 @@ Task("Build")
 	.IsDependentOn("Clean")
 	.Does(() =>
 	{
+		CreateDirectory("./build/BepInEx/plugins/ksp2-aviation-units/");
 		DotNetBuild("./ksp2-aviation-units.sln", new DotNetBuildSettings
 		{
 			Configuration = configuration
 		});
+		CopyFileToDirectory($"./ksp2-aviation-units/bin/{configuration}/netstandard2.0/ksp2-aviation-units.dll", Directory("./build/BepInEx/plugins/ksp2-aviation-units/"));
+		if (configuration == "Debug")
+			CopyFileToDirectory($"./ksp2-aviation-units/bin/{configuration}/netstandard2.0/ksp2-aviation-units.pdb", Directory("./build/BepInEx/plugins/ksp2-aviation-units/"));
 		// var unityEditor = FindUnityEditor(2020, 3, 33, 'f');
 		// if (unityEditor is null) throw new CakeException();
 		// 
@@ -56,8 +60,18 @@ Task("Install")
 	.IsDependentOn("Build")
 	.Does(() =>
 	{
-		 var gameDir = ksp2Root != string.Empty ? ksp2Root : EnvironmentVariable("KSP2_PATH") ?? throw new ArgumentNullException("ksp2-root");
-		 CopyDirectory("./build/", Directory(gameDir));
+		var gameDir = ksp2Root != string.Empty ? ksp2Root : EnvironmentVariable("KSP2_PATH") ?? throw new ArgumentNullException("ksp2-root");
+		CopyDirectory("./build/", Directory(gameDir));
+	});
+
+Task("Uninstall")
+	.Does(() =>
+	{
+		var gameDir = ksp2Root != string.Empty ? ksp2Root : EnvironmentVariable("KSP2_PATH") ?? throw new ArgumentNullException("ksp2-root");
+		DeleteDirectory(Directory(gameDir) + Directory("BepInEx/plugins/ksp2-aviation-units"), new DeleteDirectorySettings
+		{
+			Recursive = true
+		});
 	});
 
 Task("Start")
