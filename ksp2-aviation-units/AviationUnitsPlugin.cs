@@ -1,11 +1,11 @@
 using BepInEx;
+using HarmonyLib;
 using KSP.Game;
 using KSP.Messages;
 using KSP.UI.Binding;
 using KSP.UI.Binding.Core;
 using System.Reflection;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Codenade.AviationUnits
 {
@@ -14,23 +14,20 @@ namespace Codenade.AviationUnits
 	{
         public static readonly string NAME = typeof(AviationUnitsPlugin).GetCustomAttribute<BepInPlugin>().Name;
         public static readonly string GUID = typeof(AviationUnitsPlugin).GetCustomAttribute<BepInPlugin>().GUID;
-        private InputAction _toggleAction;
+        private static AviationUnitsPlugin _instance;
 
 		void Awake()
 		{
-            _toggleAction = new InputAction(GUID + "/toggle", binding: "<Keyboard>/f10");
-            _toggleAction.AddCompositeBinding("OneModifier")
-                .With("Binding", "<Keyboard>/f10")
-                .With("Modifier", "<Keyboard>/ctrl");
-            _toggleAction.Enable();
-            _toggleAction.performed += ctx =>
-            {
-                enabled = !enabled;
-            };
+            _instance = this;
             enabled = false;
+            Harmony.CreateAndPatchAll(typeof(AviationUnitsPlugin), GUID);
 		}
 
-		void OnEnable()
+        [HarmonyPatch(typeof(KSP.Game.StartupFlow.CreateMainMenuFlowAction), "DoAction")]
+        [HarmonyPostfix]
+        public static void Initialize() => _instance.enabled = true;
+
+        void OnEnable()
 		{
             if (GameManager.Instance is object)
 			    GameManager.Instance.Game.Messages.PersistentSubscribe<VesselChangedMessage>(OnVesselChanged);
